@@ -1,10 +1,10 @@
 package org.thalia.blog.notification;
 
-import org.thalia.clients.feign.shared.NotificationRegistrationRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
+import org.thalia.infra.feign.shared.NotificationRegistrationRequest;
 
 @Component
 @AllArgsConstructor

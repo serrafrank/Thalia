@@ -14,22 +14,6 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
 
-  pgadmin:
-    container_name: pgadmin4
-    image: dpage/pgadmin4:6.12
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: secret
-      PGADMIN_LISTEN_PORT: 80
-    ports:
-      - "5050:80"
-    networks:
-      - postgres
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
-
-
   zipkin:
     image: openzipkin/zipkin
     container_name: zipkin
@@ -47,8 +31,18 @@ services:
     networks:
       - spring
 
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    volumes:
+      - ./volumes/grafana:/etc/grafana/provisioning/datasources
+      - grafana-data:/var/lib/grafana
+
   eureka-server:
-    build: eureka-server
+    build: infra/eureka-server
     image: eureka-server:latest
     container_name: eureka-server
     ports:
@@ -61,7 +55,7 @@ services:
       - zipkin
 
   api-gateway:
-    build: api-gateway
+    build: infra/api-gateway
     image: api-gateway:latest
     container_name: api-gateway
     ports:
@@ -129,6 +123,7 @@ networks:
     driver: bridge
   spring:
     driver: bridge
+
 volumes:
   db-data:
-  pgadmin-data:
+  grafana-data:

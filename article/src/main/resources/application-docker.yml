@@ -18,6 +18,15 @@ spring:
   zipkin:
     base-url: http://zipkin:9411
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: 
+          - health
+          - info
+          - prometheus
+
 eureka:
   client:
     service-url:

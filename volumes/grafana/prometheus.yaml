@@ -1,0 +1,39 @@
+scrape_configs:
+  - job_name: 'eureka-server'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 2s
+    static_configs:
+      - targets: ['localhost:8761']
+        labels:
+          application: 'Eureka Server'
+  - job_name: 'api-gateway'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 2s
+    static_configs:
+      - targets: ['localhost:8083']
+        labels:
+          application: 'Api Gateway'
+
+  - job_name: 'article'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 2s
+    static_configs:
+      - targets: ['localhost:8080']
+        labels:
+          application: 'Article Service'
+
+  - job_name: 'comment'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 2s
+    static_configs:
+      - targets: ['localhost:8081']
+        labels:
+          application: 'Comment Service'
+
+  - job_name: 'notification'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 2s
+    static_configs:
+      - targets: ['localhost:8082']
+        labels:
+          application: 'Notification Service'
