@@ -1,0 +1,134 @@
+services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    restart: always
+    env_file:
+      - .env
+    environment:
+      PGDATA: /var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  pgadmin:
+    container_name: pgadmin4
+    image: dpage/pgadmin4:6.12
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: secret
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "5050:80"
+    networks:
+      - postgres
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - spring
+
+  rabbitmq:
+    image: rabbitmq:3.9.11-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - spring
+
+  eureka-server:
+    build: eureka-server
+    image: eureka-server:latest
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    env_file:
+      - .env
+    networks:
+      - spring
+    depends_on:
+      - zipkin
+
+  api-gateway:
+    build: api-gateway
+    image: api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "8083:8083"
+    env_file:
+      - .env
+    networks:
+      - spring
+    depends_on:
+      - zipkin
+      - eureka-server
+
+  article:
+    build: article
+    image: article:latest
+    container_name: article
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    networks:
+      - spring
+      - postgres
+    depends_on:
+      - zipkin
+      - postgres
+      - eureka-server
+
+  comment:
+    build: comment
+    image: comment:latest
+    container_name: comment
+    ports:
+      - "8081:8081"
+    env_file:
+      - .env
+    networks:
+      - spring
+      - postgres
+    depends_on:
+      - zipkin
+      - postgres
+      - eureka-server
+      - rabbitmq
+
+  notification:
+    build: notification
+    image: notification:latest
+    container_name: notification
+    ports:
+      - "8082:8082"
+    env_file:
+      - .env
+    networks:
+      - spring
+      - postgres
+    depends_on:
+      - zipkin
+      - postgres
+      - eureka-server
+      - rabbitmq
+
+networks:
+  postgres:
+    driver: bridge
+  spring:
+    driver: bridge
+volumes:
+  db-data:
+  pgadmin-data:
