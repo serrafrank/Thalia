@@ -10,20 +10,18 @@ buildscript {
 }
 
 ext {
-    major = System.getenv('MAJOR_VERSION') as Integer ?: "${majorVersion}" as Integer
-    minor = System.getenv('MINOR_VERSION') as Integer ?: "${minorVersion}" as Integer
-    correction = System.getenv('CORRECTION_VERSION') as Integer ?: "${correctionVersion}" as Integer
-    state = System.getenv('PROD_ENV') ? '' : System.getenv('RELEASE_ENV') ? "-RELEASE" : "-SNAPSHOT"
+    majorVersion = System.getenv('MAJOR_VERSION') as Integer ?: "${majorVersion}" as Integer
+    minorVersion = System.getenv('MINOR_VERSION') as Integer ?: "${minorVersion}" as Integer
+    correctionVersion = System.getenv('CORRECTION_VERSION') as Integer ?: "${correctionVersion}" as Integer
+    applicationState = System.getenv('PROD_ENV') ? '' : System.getenv('RELEASE_ENV') ? "-RELEASE" : "-SNAPSHOT"
     revision = System.getenv('PROD_ENV') ? '' : '_r' + 'git rev-list --count HEAD'.execute().text.trim() + '@' + 'git rev-parse --short HEAD'.execute().text.trim()
-
 }
-
 
 allprojects {
     apply plugin: 'idea'
     apply plugin: 'io.spring.dependency-management'
 
-    version = "${major}.${minor}.${correction}${state}${revision}"
+    version = "${majorVersion}.${minorVersion}.${correctionVersion}${applicationState}${revision}"
 
     repositories {
         mavenCentral()

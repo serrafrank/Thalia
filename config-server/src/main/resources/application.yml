@@ -1,0 +1,14 @@
+server:
+  port: 8020
+
+spring:
+  application:
+    name: config-server
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8010/
+    fetch-registry: true
+    register-with-eureka: true
+    enabled: false
