@@ -1,0 +1,58 @@
+services:
+
+    zipkin:
+        image: openzipkin/zipkin
+        container_name: zipkin
+        ports:
+            - "9411:9411"
+        networks:
+            - spring
+
+    eureka-server:
+        build: eureka-server
+        image: eureka-server:latest
+        container_name: eureka-server
+        ports:
+            - "8010:8010"
+        env_file:
+            - .env
+        networks:
+            - spring
+        depends_on:
+            - zipkin
+
+    config-server:
+        build: config-server
+        image: config-server:latest
+        container_name: config-server
+        ports:
+            - "8020:8020"
+        env_file:
+            - .env
+        networks:
+            - spring
+        depends_on:
+            - eureka-server
+
+    api-gateway:
+        build: api-gateway
+        image: api-gateway:latest
+        container_name: api-gateway
+        ports:
+            - "8080:8080"
+        env_file:
+            - .env
+        networks:
+            - spring
+        depends_on:
+            - config-server
+
+networks:
+    postgres:
+        driver: bridge
+    spring:
+        driver: bridge
+
+volumes:
+    db-data:
+    grafana-data:
