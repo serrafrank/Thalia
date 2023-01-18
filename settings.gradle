@@ -1,2 +1,3 @@
 rootProject.name = 'thalia'
 include 'eureka-server'
+include 'api-gateway'
